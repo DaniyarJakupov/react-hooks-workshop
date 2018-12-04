@@ -1,15 +1,14 @@
 // Counter: custom hooks
 import React, {useState} from 'react'
 
-// 🐨 create a function here called useCounter
-// the "use" prefix is a convention, and not required.
-// don't overthink this. It's JavaScript :)
-// 💰 make sure to export it for the tests.
+export function useCounter(initState = 0) {
+  const [count, setCount] = useState(initState)
+  const incrementCount = () => setCount(count + 1)
+  return [count, incrementCount]
+}
 
 function Counter() {
-  // 🐨 move these two lines to your function and return what you need
-  const [count, setCount] = useState(0)
-  const incrementCount = () => setCount(count + 1)
+  const [count, incrementCount] = useCounter()
   return <button onClick={incrementCount}>{count}</button>
 }
 
