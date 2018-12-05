@@ -14,17 +14,13 @@ function reducer(currentState, newState) {
   return {...currentState, ...newState}
 }
 
-function Stopwatch() {
-  // 🐨 1. put all the logic for the stopwatch (including event handlers)
-  // in a custom hook called useStopwatch
-  // return the state, and event handlers in an object
-  const [{running, lapse}, setState] = useReducer(reducer, {
+function useStopwatch() {
+  const [state, setState] = useReducer(reducer, {
     running: false,
     lapse: 0,
   })
+  const {running, lapse} = state
   const timerRef = useRef(null)
-
-  useEffect(() => () => clearInterval(timerRef.current), [])
 
   function handleRunClick() {
     if (running) {
@@ -38,25 +34,38 @@ function Stopwatch() {
     setState({running: !running})
   }
 
+  useEffect(() => () => clearInterval(timerRef.current), [])
+
   function handleClearClick() {
     clearInterval(timerRef.current)
     setState({running: false, lapse: 0})
   }
 
-  // 🐨 2. call your useStopwatch custom hook and get the state and event handlers
-  // for two individual stopwatches.
+  return [state, handleRunClick, handleClearClick]
+}
 
-  // 🐨 3. update the returned JSX to render two stopwatches and the diff between them
-  // 💰 if you want the tests to pass, make sure to pass a `data-testid="diff"` prop
-  // to the span where you render the difference.
+function Stopwatch() {
+  // call your useStopwatch custom hook and get the state and event handlers
+  // for two individual stopwatches.
+  const [state, handleRunClick, handleClearClick] = useStopwatch()
+  const [state2, handleRunClick2, handleClearClick2] = useStopwatch()
 
   return (
     <div style={{textAlign: 'center'}}>
       <StopwatchView
-        lapse={lapse}
-        running={running}
+        lapse={state.lapse}
+        running={state.running}
         onRunClick={handleRunClick}
         onClearClick={handleClearClick}
+      />
+      <hr />
+      <span>Lapse Difference: {state.lapse - state2.lapse}ms</span>
+      <hr />
+      <StopwatchView
+        lapse={state2.lapse}
+        running={state2.running}
+        onRunClick={handleRunClick2}
+        onClearClick={handleClearClick2}
       />
     </div>
   )
