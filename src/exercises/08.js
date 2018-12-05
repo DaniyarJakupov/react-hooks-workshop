@@ -12,41 +12,14 @@ const buttonStyles = {
 
 // 🐨 simplify this reducer to accept two state objects
 // and return a new one that performs a shallow merge.
-// 💰 here's how to perform a shallow merge:
-// const obj1 = {a: 'b', c: 'd'}
-// const obj2 = {c: 'e', f: 'g'}
-// console.log({...obj1, ...obj2}) // {a: 'b', c: 'e', f: 'g'}
-// 💰 when done correctly, this function should be no longer than 3 lines.
-// and could be done in one line if you make it an arrow function.
-function reducer(state, action) {
-  switch (action.type) {
-    case 'LAPSE':
-      return {
-        ...state,
-        lapse: action.now - action.startTime,
-      }
-    case 'TOGGLE_RUNNING':
-      return {
-        ...state,
-        running: !state.running,
-      }
-    case 'CLEAR':
-      return {
-        ...state,
-        running: false,
-        lapse: 0,
-      }
-    default:
-      break
-  }
-}
+const reducer = (state, newState) => ({...state, ...newState})
+
+const initState = {running: false, lapse: 0}
 
 function Stopwatch() {
   // 🐨 2. rename `dispatch` to `setState`
-  const [{running, lapse}, dispatch] = useReducer(reducer, {
-    running: false,
-    lapse: 0,
-  })
+  const [state, setState] = useReducer(reducer, initState)
+  const {running, lapse} = state
   const timerRef = useRef(null)
 
   useEffect(() => () => clearInterval(timerRef.current), [])
@@ -57,18 +30,18 @@ function Stopwatch() {
     } else {
       const startTime = Date.now() - lapse
       timerRef.current = setInterval(() => {
-        // 🐨 3. call `setState` instead
-        dispatch({type: 'LAPSE', now: Date.now(), startTime})
+        setState({lapse: Date.now() - startTime})
       }, 0)
     }
-    // 🐨 4. call `setState` instead
-    dispatch({type: 'TOGGLE_RUNNING'})
+    setState({running: !running})
   }
 
   function handleClearClick() {
     clearInterval(timerRef.current)
-    // 🐨 5. call `setState` instead
-    dispatch({type: 'CLEAR'})
+    setState({
+      running: false,
+      lapse: 0,
+    })
   }
 
   return (
