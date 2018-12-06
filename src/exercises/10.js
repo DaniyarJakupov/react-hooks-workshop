@@ -1,9 +1,12 @@
 // React.memo
 import React, {useState} from 'react'
 
+/*
+React.memo() is an alternative to PureComponent for function components.
+Uses shallow prop comparison to prevent unnecessary rerenders.
+*/
 // 🐨 1. wrap this in a call to React.memo
-// 💰 const MyComponent = React.memo(function MyComponent() {})
-function Upper({children}) {
+const Upper = React.memo(function Upper({children}) {
   const [count, setCount] = useState(0)
   return (
     <div>
@@ -11,7 +14,7 @@ function Upper({children}) {
       <button onClick={() => setCount(count + 1)}>{count}</button>
     </div>
   )
-}
+})
 
 function App() {
   const [first, setFirstName] = useState('')
